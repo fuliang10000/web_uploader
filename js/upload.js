@@ -141,30 +141,40 @@
         uploader = WebUploader.create({
             pick: {
                 id: '#filePicker',
-                innerHTML: '指定选择图片',
+                innerHTML: '点击选择图片',
                 multiple: true // 是否开启同时选择多个文件能力
             },
+            //指定接受哪些类型的文件
             //accept: {
             //    title: 'Images',
             //    extensions: 'gif,jpg,jpeg,bmp,png',
             //    mimeTypes: 'image/*'
             //},
+            //文件上传请求的参数表，每次发送都会发送此对象中的参数。
             formData: {
                 uid: 123
             },
-            auto: true,// 自动上传
+            auto: false,// 自动上传
             dnd: '#dndArea',
             paste: '#uploader',
             swf: './Uploader.swf',
-            chunked: false,
-            chunkSize: 512 * 1024,
+            chunked: true, //是否要分片处理大文件上传。
+            chunkSize: 2 * 1024 * 1024,//[默认值：5242880]分片默认大小为5M
+            chunkRetry: 2,//[默认值：2]如果某个分片由于网络问题出错，允许自动重传多少次？
+            threads: 3,//[默认值：3] 上传并发数。允许同时最大上传进程数。
+            fileVal: 'file',//[默认值：'file'] 设置文件上传域的name。
+            method: 'POST',//[默认值：'POST'] 文件上传方式，POST或者GET。
+            sendAsBinary: false,//[默认值：false] 是否已二进制的流的方式发送文件，这样整个上传内容php://input都为文件内容， 其他参数在$_GET数组中。
             server: './server/fileupload.php',
-            // runtimeOrder: 'flash',
+            // runtimeOrder: 'flash', //[默认值：html5,flash] 指定运行时启动顺序。默认会想尝试 html5 是否支持，如果支持则使用 html5, 否则则使用 flash.可以将此值设置成 flash，来强制使用 flash 运行时。
             // 禁掉全局的拖拽功能。这样不会出现图片拖进页面的时候，把图片打开。
-            disableGlobalDnd: true,
-            fileNumLimit: 300,
-            fileSizeLimit: 200 * 1024 * 1024,    // 200 M
-            fileSingleSizeLimit: 100 * 1024 * 1024    // 50 M
+            disableGlobalDnd: true,//[默认值：false] 是否禁掉整个页面的拖拽功能，如果不禁用，图片拖进来的时候会默认被浏览器打开。
+            prepareNextFile: true,//是否允许在文件传输时提前把下一个文件准备好。 对于一个文件的准备工作比较耗时，比如图片压缩，md5序列化。 如果能提前在当前文件传输期处理，可以节省总体耗时。
+            fileNumLimit: 10,//[默认值：undefined] 验证文件总数量, 超出则不允许加入队列。
+            fileSizeLimit: 500 * 1024 * 1024, //[默认值：undefined] 验证文件总大小是否超出限制, 超出则不允许加入队列。
+            fileSingleSizeLimit: 100 * 1024 * 1024,// [默认值：undefined] 验证单个文件大小是否超出限制, 超出则不允许加入队列。
+            duplicate : true,// [默认值：undefined] 去重， 根据文件名字、文件大小和最后修改时间来生成hash Key.
+            disableWidgets : ''// {String, Array}[默认值：undefined] 默认所有 Uploader.register 了的 widget 都会被加载，如果禁用某一部分，请通过此 option 指定黑名单。事件说明
         });
 
         // 拖拽时不接受 js, txt 文件。
